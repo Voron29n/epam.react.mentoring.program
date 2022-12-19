@@ -1,34 +1,19 @@
-import React from 'react';
-import {
-  ErrorBoundary,
-  FilterBar,
-  Footer,
-  Header,
-  Lightbox,
-  MovieList
-} from 'components';
-import { useTypedSelector } from 'hooks';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import React, { useContext } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Lightbox } from 'components';
+import { ILightboxContext, LightboxContext } from 'context';
+import { router } from 'utils/router';
 import './style.scss';
 
-const App = () => {
-  const { lightbox, isLightboxOpen } = useTypedSelector(
-    state => state.lightbox
-  );
+export const App = () => {
+  const { lightbox } = useContext<ILightboxContext>(LightboxContext);
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <Header />
-        <ErrorBoundary>
-          <FilterBar />
-          <MovieList />
-        </ErrorBoundary>
-        <Footer />
-        {isLightboxOpen && lightbox && <Lightbox {...lightbox} />}
-      </LocalizationProvider>
+      <RouterProvider router={router} />
+      {!!lightbox && <Lightbox {...lightbox} />}
+      <ReactQueryDevtools initialIsOpen={false} />
     </>
   );
 };
-export default App;

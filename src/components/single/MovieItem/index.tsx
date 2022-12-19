@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { memo, useCallback, useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { IDropDownItem, MovieView } from 'components';
+import { ILightboxContext, LightboxContext, MovieActionTypes } from 'context';
 import { useActions } from 'hooks';
-import { handleDeleteAction, handleEditAction } from './utils';
 
-export interface Movie {
+export type Movie = {
   id: number;
   title: string;
   genres: Array<string>;
@@ -14,9 +15,10 @@ export interface Movie {
   overview: string;
 
   [key: string]: string | number | Array<string>;
-}
+};
 
 export enum MovieKey {
+  ID = 'id',
   TITLE = 'title',
   DATE = 'releaseDate',
   RATING = 'voteAverage',
@@ -30,31 +32,24 @@ interface IMovieItemProps {
   movieItem: Movie;
 }
 
-export const MovieItem = ({ movieItem }: IMovieItemProps) => {
-  const {
-    setMovieDetail,
-    deleteMovies,
-    editMovies,
-    openLightbox,
-    closeLightbox
-  } = useActions();
+const MovieItemMemo = ({ movieItem }: IMovieItemProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { setMovieDetail } = useActions();
+  const { setLightbox, handleLightboxMovieActions } =
+    useContext<ILightboxContext>(LightboxContext);
 
-  const handleClick = () => setMovieDetail(movieItem);
+  const handleClick = () =>
+    setMovieDetail(movieItem, searchParams, setSearchParams);
 
   const handleSelectedDropdownItem = useCallback(
-    (lightboxType: IDropDownItem) => {
-      if (lightboxType.label === 'delete') {
-        handleDeleteAction(
-          movieItem,
-          deleteMovies,
-          openLightbox,
-          closeLightbox
-        );
-      } else {
-        handleEditAction(movieItem, editMovies, openLightbox, closeLightbox);
-      }
+    (dropDownItem: IDropDownItem) => {
+      handleLightboxMovieActions({
+        action: dropDownItem.value as MovieActionTypes,
+        movie: movieItem,
+        setLightbox
+      });
     },
-    [closeLightbox, deleteMovies, editMovies, openLightbox]
+    [movieItem]
   );
 
   return (
@@ -65,3 +60,5 @@ export const MovieItem = ({ movieItem }: IMovieItemProps) => {
     />
   );
 };
+
+export const MovieItem = memo(MovieItemMemo);

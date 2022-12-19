@@ -7,8 +7,13 @@ export * from './containers/MovieForm';
 export * from './containers/MovieForm/MovieFormView';
 export * from './containers/MovieList';
 export * from './containers/MovieList/MovieListView';
-export * from './single/Confirm';
 
+export * from './service/DeleteMovie';
+export * from './service/EditMovie';
+export * from './service/AddMovie';
+export * from './service/SearchMovie';
+
+export * from './single/Confirm';
 export * from './single/Congratulations';
 export * from './single/DropDown';
 export * from './single/DropDown/DropDownItem';
@@ -28,3 +33,4 @@ export * from './single/Spinner';
 
 export * from './error/ErrorBoundary';
 export * from './error/FetchErrorMessage';
+export * from './error/UnknownPage';
